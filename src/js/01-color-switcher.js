@@ -12,16 +12,13 @@ refs.start.addEventListener('click', startChangeBgColor);
 refs.stop.addEventListener('click', stopChangeBgColor);
 
 function startChangeBgColor() {
-  console.log('onChangeBgColor');
-  refs.start.disabled = true;
+  refs.start.disabled = true; //disabled button start
   idInterval = setInterval(() => {
     document.body.style.backgroundColor = getRandomHexColor();
   }, 1000);
 }
 
 function stopChangeBgColor() {
-  refs.start.disabled = false;
-
+  refs.start.disabled = false; //enabled button start
   clearInterval(idInterval);
-  console.log('offChangeBgColor');
 }
