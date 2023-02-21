@@ -12,6 +12,10 @@ import Notiflix from 'notiflix';
 const refs = {
   input: document.querySelector('#datetime-picker'),
   start: document.querySelector('[data-start]'),
+  days: document.querySelector('[data-days]'),
+  hours: document.querySelector('[data-hours]'),
+  minutes: document.querySelector('[data-minutes]'),
+  seconds: document.querySelector('[data-seconds]'),
 };
 
 class Timer {
@@ -20,27 +24,29 @@ class Timer {
     this.isActive = false;
     this.onTick = onTick;
   }
+
   start() {
     if (this.isActive) {
       return;
     }
-    const startTime = Date.now();
+
     this.isActive = true;
 
     this.intervalId = setInterval(() => {
-      const currentTime = Date.now();
-      const deltaTime = currentTime - startTime;
-      const time = this.getTimeComponents(deltaTime);
+      if (deltaTime < 1000) {
+        timer.stop();
+      }
 
+      const time = convertMs(deltaTime);
       this.onTick(time);
+      deltaTime -= 1000; //Зменшуємо час на 1с
     }, 1000);
   }
-  stop() {
-    clearInterval(this.intervalId);
-    this.isActive = false;
 
-    const time = getTimeComponents(0);
-    this.onTick(time);
+  stop() {
+    this.isActive = false;
+    Notiflix.Notify.success('Час вийшов');
+    clearInterval(this.intervalId);
   }
 }
 
@@ -54,10 +60,30 @@ const options = {
   },
 };
 
-flatpickr('input#datetime-picker', options);
-refs.input.addEventListener('input', inputDateTime);
+let deltaTime;
 
-function inputDateTime(date) {}
+const newTime = flatpickr('input#datetime-picker', options);
+console.log(newTime);
+refs.input.addEventListener('input', inputDateTime);
+refs.start.addEventListener('click', () => {
+  timer.start();
+});
+
+function inputDateTime() {
+  const currentTime = Date.now(); //Поточний час в мілісекундах
+  const startTime = new Date(refs.input.value).getTime(); //вибраний час переводимо в мілісекунди
+
+  if (startTime < currentTime) {
+    Notiflix.Notify.failure('Please choose a date in the future');
+    console.log('Please choose a date in the future');
+    return;
+  }
+
+  return (deltaTime = startTime - currentTime);
+}
+const timer = new Timer({
+  onTick: updateClockface,
+});
 
 function convertMs(ms) {
   // Number of milliseconds per unit of time
@@ -67,49 +93,26 @@ function convertMs(ms) {
   const day = hour * 24;
 
   // Remaining days
-  const days = Math.floor(ms / day);
+  const days = addLeadingZero(Math.floor(ms / day));
   // Remaining hours
-  const hours = Math.floor((ms % day) / hour);
+  const hours = addLeadingZero(Math.floor((ms % day) / hour));
   // Remaining minutes
-  const minutes = Math.floor(((ms % day) % hour) / minute);
+  const minutes = addLeadingZero(Math.floor(((ms % day) % hour) / minute));
   // Remaining seconds
-  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
+  const seconds = addLeadingZero(
+    Math.floor((((ms % day) % hour) % minute) / second)
+  );
 
   return { days, hours, minutes, seconds };
 }
-console.log(convertMs(2000));
 
 function addLeadingZero(value) {
-  return toString(value).padStart(2, '0');
+  return value.toString().padStart(2, '0');
 }
 
-console.log(addLeadingZero(1));
-
-Notiflix.Notify.success('Sol lucet omnibus');
-
-Notiflix.Notify.failure('Qui timide rogat docet negare');
-
-Notiflix.Notify.warning('Memento te hominem esse');
-
-Notiflix.Notify.info('Cogito ergo sum');
-
-// e.g. Message with a callback
-Notiflix.Notify.success('Click Me', function cb() {
-  // callback
-});
-
-// e.g. Message with the new options
-Notiflix.Notify.success('Click Me', {
-  timeout: 6000,
-});
-
-// e.g. Message with callback, and the new options
-Notiflix.Notify.success(
-  'Click Me',
-  function cb() {
-    // callback
-  },
-  {
-    timeout: 4000,
-  }
-);
+function updateClockface({ days, hours, minutes, seconds }) {
+  refs.days.textContent = days;
+  refs.hours.textContent = hours;
+  refs.minutes.textContent = minutes;
+  refs.seconds.textContent = seconds;
+}
