@@ -1,7 +1,7 @@
 import Notiflix from 'notiflix';
 
 const refs = {
-  btnsubmit: document.querySelector('button'),
+  btnSubmit: document.querySelector('button'),
   delay: document.querySelector('input[name="delay"]'),
   step: document.querySelector('input[name="step"]'),
   amount: document.querySelector('input[name="amount"]'),
@@ -23,13 +23,13 @@ function createPromise(position, delay) {
   return promise;
 }
 
-btnCreatePromise.addEventListener('click', e => {
+refs.btnSubmit.addEventListener('click', e => {
   e.preventDefault(); // відміна оновлення сторінки
 
   let firstDelay = Number(refs.delay.value);
   let delayStep = Number(refs.step.value);
 
-  for (let i = 0; i < amount.value; i += 1) {
+  for (let i = 0; i < refs.amount.value; i += 1) {
     createPromise(1 + i, firstDelay + i * delayStep)
       .then(({ position, delay }) => {
         Notiflix.Notify.success(
