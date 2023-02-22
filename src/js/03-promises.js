@@ -1,22 +1,45 @@
+import Notiflix from 'notiflix';
+
 const refs = {
-  submit: document.querySelector('button'),
-  delay: document.querySelector('[name="delay"]'),
-  step: document.querySelector('[name="step"]'),
-  amount: document.querySelector('[name="amount"]'),
+  btnsubmit: document.querySelector('button'),
+  delay: document.querySelector('input[name="delay"]'),
+  step: document.querySelector('input[name="step"]'),
+  amount: document.querySelector('input[name="amount"]'),
 };
 
-refs.submit.addEventListener('submit', createPromise);
-refs.delay.addEventListener('input');
-refs.step.addEventListener('input');
-refs.amount.addEventListener('input');
-
 function createPromise(position, delay) {
-  const shouldResolve = Math.random() > 0.3;
-  if (shouldResolve) {
-    // Fulfill
-    Notiflix.Notify.success('Час вийшов');
-  } else {
-    // Reject
-    Notiflix.Notify.failure('Час вийшов');
-  }
+  const promise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const shouldResolve = Math.random() > 0.3;
+
+      if (shouldResolve) {
+        resolve({ position, delay });
+      } else {
+        reject({ position, delay });
+      }
+    }, delay);
+  });
+
+  return promise;
 }
+
+btnCreatePromise.addEventListener('click', e => {
+  e.preventDefault(); // відміна оновлення сторінки
+
+  let firstDelay = Number(refs.delay.value);
+  let delayStep = Number(refs.step.value);
+
+  for (let i = 0; i < amount.value; i += 1) {
+    createPromise(1 + i, firstDelay + i * delayStep)
+      .then(({ position, delay }) => {
+        Notiflix.Notify.success(
+          `✅ Fulfilled promise ${position} in ${delay}ms`
+        );
+      })
+      .catch(({ position, delay }) => {
+        Notiflix.Notify.failure(
+          `❌ Rejected promise ${position} in ${delay}ms`
+        );
+      });
+  }
+});
