@@ -1,6 +1,7 @@
 import Notiflix from 'notiflix';
 
 const refs = {
+  form: document.querySelector('.form'),
   btnSubmit: document.querySelector('button'),
   delay: document.querySelector('input[name="delay"]'),
   step: document.querySelector('input[name="step"]'),
@@ -30,7 +31,7 @@ refs.btnSubmit.addEventListener('click', e => {
   let delayStep = Number(refs.step.value);
 
   for (let i = 0; i < refs.amount.value; i += 1) {
-    createPromise(1 + i, firstDelay + i * delayStep)
+    createPromise(1 + i, refs.delay.value + i * refs.step.value)
       .then(({ position, delay }) => {
         Notiflix.Notify.success(
           `✅ Fulfilled promise ${position} in ${delay}ms`
@@ -42,4 +43,5 @@ refs.btnSubmit.addEventListener('click', e => {
         );
       });
   }
+  refs.form.reset();
 });
