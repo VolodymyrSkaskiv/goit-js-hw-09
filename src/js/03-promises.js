@@ -31,7 +31,7 @@ refs.btnSubmit.addEventListener('click', e => {
   let delayStep = Number(refs.step.value);
 
   for (let i = 0; i < refs.amount.value; i += 1) {
-    createPromise(1 + i, refs.delay.value + i * refs.step.value)
+    createPromise(i + 1, firstDelay + i * delayStep)
       .then(({ position, delay }) => {
         Notiflix.Notify.success(
           `✅ Fulfilled promise ${position} in ${delay}ms`
