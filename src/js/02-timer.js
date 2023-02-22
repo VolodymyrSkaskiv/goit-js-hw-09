@@ -75,7 +75,6 @@ function inputDateTime() {
 
   if (startTime < currentTime) {
     Notiflix.Notify.failure('Please choose a date in the future');
-    console.log('Please choose a date in the future');
     return;
   }
 
