@@ -69,6 +69,8 @@ refs.start.addEventListener('click', () => {
   timer.start();
 });
 
+refs.start.disabled = true; //робимо кнопку неактивною
+
 function inputDateTime() {
   const currentTime = Date.now(); //Поточний час в мілісекундах
   const startTime = new Date(refs.input.value).getTime(); //вибраний час переводимо в мілісекунди
@@ -76,7 +78,6 @@ function inputDateTime() {
   if (startTime < currentTime) {
     Notiflix.Notify.failure('Please choose a date in the future');
 
-    refs.start.disabled = true;
     return;
   }
   refs.start.disabled = false;
